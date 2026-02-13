@@ -1,1 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dovedale Railway | Unofficial Workstation Ledger</title>
+    <style>
+        :root {
+            --bg: #0f1115;
+            --panel: #1a1d24;
+            --accent: #ffb800; 
+            --tol-red: #ff3333;
+            --text: #e2e8f0;
+            --border: #2d3748;
+            --up-color: #4299e1; 
+            --down-color: #48bb78; 
+            --branch-color: #9f7aea;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            background: #000;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--accent);
+            flex-shrink: 0;
+            z-index: 50;
+        }
+        .header-controls { display: flex; gap: 15px; align-items: center; }
+        h1 { margin: 0; font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .help-btn {
+            background: #2d3748;
+            color: white;
+            border: 2px solid #4a5568;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .help-btn:hover {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
+        }
 
+        .workstation-select {
+            background: #2d3748;
+            color: white;
+            border: 2px solid var(--accent);
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #add-train-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 800;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #add-train-btn:hover { transform: scale(1.05); }
+        .board {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            align-items: stretch;
+            flex-grow: 1;
+        }
+        .column {
+            background: var(--panel);
+            min-width: 260px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            flex-shrink: 0;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        .column.hidden { display: none !important; }
+        .column h3 {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #cbd5e0;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--panel);
+            z-index: 5;
+        }
+        .drop-zone {
+            background: #121419;
+            min-height: 70px;
+            margin-bottom: 10px;
+            border: 2px dashed #4a5568;
+            border-radius: 6px;
+            padding: 18px 10px 10px 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .drop-zone::before {
+            content: attr(data-label);
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: #718096;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+        .block-section { background: #14171c; border-color: #4a5568; min-width: 220px; }
+        .single-line-zone { border: 2px solid var(--accent); }
+        .up-line-zone { border-left: 4px solid var(--up-color); }
+        .down-line-zone { border-left: 4px solid var(--down-color); }
+        .branch-line-zone { border-left: 4px solid var(--branch-color); }
+        .drop-zone.occupied-tol {
+            background: rgba(255, 51, 51, 0.15);
+            border: 2px solid var(--tol-red);
+            box-shadow: inset 0 0 15px rgba(255, 51, 51, 0.2);
+        }
+        .train {
+            background: #fff;
+            color: #000;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 900;
+            cursor: grab;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border-left: 6px solid #e2e8f0;
+            font-family: 'Consolas', monospace;
+            font-size: 1.1rem;
+            z-index: 10;
+        }
+        .train.up-bound { border-left-color: var(--up-color); }
+        .train.down-bound { border-left-color: var(--down-color); }
+        .train:active { cursor: grabbing; opacity: 0.9; }
+        .trash-column {
+            background: #2a1111;
+            border-color: #ff3333;
+            min-width: 180px;
+        }
+        .trash-column h3 { background: transparent; color: #ff3333; border-color: #ff3333; }
+        #trash-zone {
+            border-color: #ff3333;
+            color: #ff3333;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            min-height: 100px;
+            background: rgba(255,0,0,0.1);
+        }
+        #trash-zone.drag-over { background: rgba(255,0,0,0.4); }
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: var(--panel);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+            width: 320px;
+        }
+        .help-content {
+            width: 450px;
+            text-align: left;
+        }
+        .help-content h2 { text-align: center; margin-top: 0; color: var(--accent); }
+        .help-content ul { padding-left: 20px; line-height: 1.6; }
+        .help-content li { margin-bottom: 8px; }
+        input, select {
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            background: #0f1115;
+            border: 1px solid #4a5568;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .modal-btns { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--accent); color: black; }
+        .btn-secondary { background: #4a5568; color: white; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Unofficial Dovedale Signal Ledger</h1>
+        </div>
+        <div class="header-controls">
+            <button id="help-btn" class="help-btn">?</button>
+            <select id="workstation-selector" class="workstation-select">
+                <option value="ALL">Show All Stations</option>
+                <option value="MS">Workstation: Masonfield</option>
+                <option value="GJ">Workstation: Glassbury Junction</option>
+                <option value="CC">Workstation: Codsall Castle</option>
+                <option value="MC">Workstation: Marigot Crossing</option>
+                <option value="MW">Workstation: Mazewood</option>
+                <option value="GE">Workstation: Gleethrop End</option>
+                <option value="DC">Workstation: Dovedale Central</option>
+                <option value="CH">Workstation: Cosdale Harbour</option>
+                <option value="DE">Workstation: Dovedale East</option>
+                <option value="SAT">Workstation: Satus Services</option>
+                <option value="FM">Workstation: Fanory Mill</option>
+                <option value="BL">Workstation: Benyhone Loop</option>
+                <option value="AB">Workstation: Ashburn</option>
+            </select>
+            <button id="add-train-btn">+ SPAWN TRAIN</button>
+        </div>
+    </header>
+
+    <div class="board" id="board">
+        
+        <div class="column" data-views="ALL MS GJ">
+            <h3>MASONFIELD (MS)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="ms-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="ms-p2"></div>
+            <div class="drop-zone" data-label="PLATFORM 3" id="ms-p3"></div>
+            <div class="drop-zone" data-label="MS SIDINGS" id="ms-sidings"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL MS GJ">
+            <h3>LINE: MS ↔ GJ</h3>
+            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-ms-gj-up"></div>
+            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-ms-gj-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL MS GJ CC" style="min-width: 220px;">
+            <h3>GLASSBURY JN (GJ)</h3>
+            <div class="drop-zone up-line-zone" data-label="UP LINE" id="gj-up"></div>
+            <div class="drop-zone down-line-zone" data-label="DOWN LINE" id="gj-down"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL GJ CC">
+            <h3>LINE: GJ ↔ CC</h3>
+            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-gj-cc-up"></div>
+            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-gj-cc-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL GJ CC MC">
+            <h3>CODSALL CASTLE (CC)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="cc-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="cc-p2"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL CC MC">
+            <h3>LINE: CC ↔ MC</h3>
+            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-cc-mc-up"></div>
+            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-cc-mc-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL CC MC MW" style="min-width: 220px;">
+            <h3>MARIGOT CROSSING (MC)</h3>
+            <div class="drop-zone up-line-zone" data-label="UP CROSSING" id="mc-up"></div>
+            <div class="drop-zone down-line-zone" data-label="DOWN CROSSING" id="mc-down"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL MC MW">
+            <h3>LINE: MC ↔ MW</h3>
+            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-mc-mw-up"></div>
+            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-mc-mw-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL MC MW DC">
+            <h3>MAZEWOOD (MW)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="mw-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="mw-p2"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL MW DC">
+            <h3>LINE: MW ↔ DC</h3>
+            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-mw-dc-up"></div>
+            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-mw-dc-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL GE DC">
+            <h3>GLEETHROP END (GE)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="ge-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="ge-p2"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL GE DC">
+            <h3>LINE: GE ↔ DC</h3>
+            <div class="drop-zone branch-line-zone" data-type="absolute" data-label="UP BRANCH" id="line-ge-dc-up"></div>
+            <div class="drop-zone branch-line-zone" data-type="absolute" data-label="DOWN BRANCH" id="line-ge-dc-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL MW DC GE DE" style="min-width: 340px;">
+            <h3>DOVEDALE CENTRAL (DC)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1 (TERMINUS)" id="dc-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2 (TERMINUS)" id="dc-p2"></div>
+            <div class="drop-zone" data-label="PLATFORM 3 (TERMINUS)" id="dc-p3"></div>
+            <div class="drop-zone" data-label="PLATFORM 4 (TERMINUS)" id="dc-p4"></div>
+            <div class="drop-zone" data-label="PLATFORM 5 (THROUGH)" id="dc-p5"></div>
+            <div class="drop-zone" data-label="PLATFORM 6 (THROUGH)" id="dc-p6"></div>
+            <div class="drop-zone" data-label="PLATFORM 7 (THROUGH)" id="dc-p7"></div>
+            <div class="drop-zone" data-label="PLATFORM 8 (THROUGH)" id="dc-p8"></div>
+            <div class="drop-zone" data-label="DC SIDINGS / TMD" id="dc-sidings"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL DC DE">
+            <h3>LINE: DC ↔ DE</h3>
+            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-dc-de-up"></div>
+            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-dc-de-down"></div>
+        </div>
+
+        <div class="column" data-views="ALL CH DE">
+            <h3>COSDALE HARBOUR (CH)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="ch-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="ch-p2"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL CH DE">
+            <h3>LINE: CH ↔ DE</h3>
+            <div class="drop-zone branch-line-zone" data-type="single" data-label="SINGLE BRANCH" id="line-ch-de"></div>
+        </div>
+
+        <div class="column" data-views="ALL DC DE CH SAT" style="min-width: 320px;">
+            <h3>DOVEDALE EAST (DE)</h3>
+            <div class="drop-zone" data-label="PLATFORM 6 (TERMINATES FROM DC)" id="de-p6"></div>
+            <div class="drop-zone" data-label="PLATFORM 5 (UP LOOP)" id="de-p5"></div>
+            <div class="drop-zone" data-label="PLATFORM 4 (UP MAIN)" id="de-p4"></div>
+            <div class="drop-zone" data-label="PLATFORM 3 (DOWN MAIN)" id="de-p3"></div>
+            <div class="drop-zone" data-label="PLATFORM 2 (DOWN LOOP)" id="de-p2"></div>
+            <div class="drop-zone" data-label="PLATFORM 1 (TERMINATES FROM SAT)" id="de-p1"></div>
+            <div class="drop-zone" data-label="DE SIDINGS" id="de-sidings"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL DE SAT">
+            <h3>⚠️ LINE: DE ↔ SAT</h3>
+            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-de-sat"></div>
+        </div>
+
+        <div class="column" data-views="ALL DE SAT FM">
+            <h3>SATUS SERVICES (SAT)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1 (UP)" id="sat-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2 (DOWN)" id="sat-p2"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL SAT FM">
+            <h3>⚠️ LINE: SAT ↔ FM</h3>
+            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-sat-fm"></div>
+        </div>
+
+        <div class="column" data-views="ALL SAT FM BL">
+            <h3>FANORY MILL (FM)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="fm-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="fm-p2"></div>
+            <div class="drop-zone" data-label="SIDINGS" id="fm-sidings"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL FM BL">
+            <h3>⚠️ LINE: FM ↔ BL</h3>
+            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-fm-bl"></div>
+        </div>
+
+        <div class="column" data-views="ALL FM BL AB" style="min-width: 220px;">
+            <h3>BENYHONE LOOP (BL)</h3>
+            <div class="drop-zone up-line-zone" data-label="UP LOOP" id="bl-up"></div>
+            <div class="drop-zone down-line-zone" data-label="DOWN LOOP" id="bl-down"></div>
+        </div>
+
+        <div class="column block-section" data-views="ALL BL AB">
+            <h3>⚠️ LINE: BL ↔ AB</h3>
+            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-bl-ab"></div>
+        </div>
+
+        <div class="column" data-views="ALL BL AB">
+            <h3>ASHBURN (AB)</h3>
+            <div class="drop-zone" data-label="PLATFORM 1" id="ab-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="ab-p2"></div>
+        </div>
+
+        <div class="column trash-column" data-views="ALL MS GJ CC MC MW GE DC CH DE SAT FM BL AB">
+            <h3>END OF LINE</h3>
+            <div class="drop-zone" id="trash-zone" data-type="trash">
+                <br>DROP TRAIN HERE<br>TO DESPAWN
+            </div>
+        </div>
+
+    </div>
+
+    <div id="spawn-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin-top:0;">Identify Train</h2>
+            <input type="text" id="headcode-input" placeholder="Headcode (e.g. 1A02)" maxlength="4">
+            <select id="direction-input">
+                <option value="up">Up Train (Towards MS)</option>
+                <option value="down">Down Train (Towards AB)</option>
+            </select>
+            <select id="spawn-loc-input">
+                <option value="ms-sidings">Masonfield (Sidings)</option>
+                <option value="dc-sidings" selected>Dovedale Central (TMD/Sidings)</option>
+                <option value="ge-p1">Gleethrop End (Platform 1)</option>
+                <option value="ch-p1">Cosdale Harbour (Platform 1)</option>
+                <option value="de-sidings">Dovedale East (Sidings)</option>
+                <option value="sat-p1">Satus Services (Platform 1)</option>
+                <option value="fm-sidings">Fanory Mill (Sidings)</option>
+                <option value="ab-p1">Ashburn (Platform 1)</option>
+            </select>
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="document.getElementById('spawn-modal').style.display='none'">Cancel</button>
+                <button class="btn btn-primary" id="confirm-spawn">SPAWN</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal-overlay">
+        <div class="modal-content help-content">
+            <h2>How to Use the Ledger</h2>
+            <p><strong>Colors & Lines:</strong></p>
+            <ul>
+                <li><span style="color:var(--up-color);font-weight:bold;">Blue:</span> UP Trains / UP Lines (Travelling Left towards Masonfield)</li>
+                <li><span style="color:var(--down-color);font-weight:bold;">Green:</span> DOWN Trains / DOWN Lines (Travelling Right towards Ashburn)</li>
+                <li><span style="color:var(--branch-color);font-weight:bold;">Purple:</span> Branch Lines (Gleethrop End & Cosdale Harbour)</li>
+                <li><span style="color:var(--tol-red);font-weight:bold;">Red Pulse:</span> Train On Line (Occupied Track Section)</li>
+            </ul>
+            <p><strong>Mechanics:</strong></p>
+            <ul>
+                <li><strong>Moving:</strong> Click and drag the train card to any platform or block line drop zone.</li>
+                <li><strong>Interlocks:</strong> The system enforces Absolute and Tokenless Block rules. It will block you from dragging a train into a track section that is already occupied.</li>
+                <li><strong>Removing:</strong> Drag a train to the "END OF LINE" column to permanently despawn it.</li>
+            </ul>
+            <button class="btn btn-primary" id="close-help-btn" style="width:100%; margin-top:10px;">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        const workstationSelect = document.getElementById('workstation-selector');
+        const columns = document.querySelectorAll('.column');
+
+        workstationSelect.addEventListener('change', (e) => {
+            const selectedView = e.target.value;
+            columns.forEach(col => {
+                const views = col.getAttribute('data-views').split(' ');
+                if (views.includes(selectedView)) {
+                    col.classList.remove('hidden');
+                } else {
+                    col.classList.add('hidden');
+                }
+            });
+        });
+
+        const spawnModal = document.getElementById('spawn-modal');
+        const addBtn = document.getElementById('add-train-btn');
+        const confirmBtn = document.getElementById('confirm-spawn');
+        
+        const helpModal = document.getElementById('help-modal');
+        const helpBtn = document.getElementById('help-btn');
+        const closeHelpBtn = document.getElementById('close-help-btn');
+
+        helpBtn.onclick = () => { helpModal.style.display = 'flex'; };
+        closeHelpBtn.onclick = () => { helpModal.style.display = 'none'; };
+
+        addBtn.onclick = () => { spawnModal.style.display = 'flex'; document.getElementById('headcode-input').focus(); };
+
+        confirmBtn.onclick = () => {
+            const headcode = document.getElementById('headcode-input').value.toUpperCase() || "UNKN";
+            const dir = document.getElementById('direction-input').value;
+            const loc = document.getElementById('spawn-loc-input').value;
+            
+            createTrain(headcode, dir, loc);
+            spawnModal.style.display = 'none';
+            document.getElementById('headcode-input').value = "";
+        };
+
+        function createTrain(headcode, direction, locationId) {
+            const train = document.createElement('div');
+            train.className = `train ${direction === 'up' ? 'up-bound' : 'down-bound'}`;
+            train.id = 'train-' + Math.random().toString(36).substr(2, 9);
+            train.draggable = true;
+            
+            const arrow = direction === 'up' ? '⬅' : '➔';
+            train.innerText = `${arrow} ${headcode}`;
+
+            train.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', train.id);
+                setTimeout(() => train.style.opacity = '0.5', 0); 
+            });
+            train.addEventListener('dragend', () => train.style.opacity = '1');
+
+            document.getElementById(locationId).appendChild(train);
+        }
+
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if(zone.id === 'trash-zone') {
+                    zone.classList.add('drag-over');
+                } else {
+                    zone.style.background = '#2d3748'; 
+                }
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.style.background = ''; 
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.style.background = '';
+                zone.classList.remove('drag-over');
+                
+                const trainId = e.dataTransfer.getData('text/plain');
+                const train = document.getElementById(trainId);
+                if (!train) return;
+                
+                if (zone.id === 'trash-zone') {
+                    train.remove();
+                    updateTOL();
+                    return;
+                }
+
+                const lineType = zone.getAttribute('data-type');
+                if (lineType === 'single' && zone.children.length >= 1) {
+                    alert("SAFETY INTERLOCK: Tokenless Block section is OCCUPIED. Stop!");
+                    return; 
+                }
+                if (lineType === 'absolute' && zone.children.length >= 1) {
+                    alert("SAFETY INTERLOCK: Absolute Block section occupied. Stop!");
+                    return; 
+                }
+
+                zone.appendChild(train);
+                updateTOL();
+            });
+        });
+
+        function updateTOL() {
+            document.querySelectorAll('.drop-zone[data-type="absolute"], .drop-zone[data-type="single"]').forEach(zone => {
+                if (zone.children.length > 0) {
+                    zone.classList.add('occupied-tol');
+                } else {
+                    zone.classList.remove('occupied-tol');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
