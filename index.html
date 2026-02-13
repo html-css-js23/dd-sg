@@ -81,6 +81,19 @@
             transition: 0.2s;
         }
         #add-train-btn:hover { transform: scale(1.05); }
+
+        #clear-all-btn {
+            background: #3a1111;
+            color: #ff3333;
+            border: 1px solid #ff3333;
+            padding: 10px 15px;
+            font-weight: 800;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #clear-all-btn:hover { background: #ff3333; color: white; }
+
         .board {
             display: flex;
             gap: 12px;
@@ -248,6 +261,7 @@
                 <option value="BL">Workstation: Benyhone Loop</option>
                 <option value="AB">Workstation: Ashburn</option>
             </select>
+            <button id="clear-all-btn">CLEAR ALL</button>
             <button id="add-train-btn">+ SPAWN TRAIN</button>
         </div>
     </header>
@@ -463,6 +477,7 @@
                 <li><strong>Moving:</strong> Click and drag the train card to any platform or block line drop zone.</li>
                 <li><strong>Interlocks:</strong> The system enforces Absolute and Tokenless Block rules. It will block you from dragging a train into a track section that is already occupied.</li>
                 <li><strong>Removing:</strong> Drag a train to the "END OF LINE" column to permanently despawn it.</li>
+                <li><strong>Saving:</strong> The board automatically saves your trains to your browser. You can safely refresh the page without losing track of your trains.</li>
             </ul>
             <button class="btn btn-primary" id="close-help-btn" style="width:100%; margin-top:10px;">Got it!</button>
         </div>
@@ -487,6 +502,7 @@
         const spawnModal = document.getElementById('spawn-modal');
         const addBtn = document.getElementById('add-train-btn');
         const confirmBtn = document.getElementById('confirm-spawn');
+        const clearAllBtn = document.getElementById('clear-all-btn');
         
         const helpModal = document.getElementById('help-modal');
         const helpBtn = document.getElementById('help-btn');
@@ -497,6 +513,14 @@
 
         addBtn.onclick = () => { spawnModal.style.display = 'flex'; document.getElementById('headcode-input').focus(); };
 
+        clearAllBtn.onclick = () => {
+            if(confirm("Are you sure you want to delete ALL trains from the ledger?")) {
+                document.querySelectorAll('.train').forEach(t => t.remove());
+                updateTOL();
+                saveState();
+            }
+        };
+
         confirmBtn.onclick = () => {
             const headcode = document.getElementById('headcode-input').value.toUpperCase() || "UNKN";
             const dir = document.getElementById('direction-input').value;
@@ -506,6 +530,51 @@
             spawnModal.style.display = 'none';
             document.getElementById('headcode-input').value = "";
         };
+
+        function saveState() {
+            const state = [];
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                const trains = [];
+                zone.querySelectorAll('.train').forEach(t => {
+                    trains.push({
+                        id: t.id,
+                        text: t.innerText,
+                        direction: t.classList.contains('up-bound') ? 'up' : 'down'
+                    });
+                });
+                if(trains.length > 0) {
+                    state.push({ zoneId: zone.id, trains: trains });
+                }
+            });
+            localStorage.setItem('dovedaleState', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('dovedaleState');
+            if(!saved) return;
+            const state = JSON.parse(saved);
+            state.forEach(zoneData => {
+                const zone = document.getElementById(zoneData.zoneId);
+                if(zone && zoneData.zoneId !== 'trash-zone') {
+                    zoneData.trains.forEach(tData => {
+                        const train = document.createElement('div');
+                        train.className = `train ${tData.direction === 'up' ? 'up-bound' : 'down-bound'}`;
+                        train.id = tData.id;
+                        train.draggable = true;
+                        train.innerText = tData.text;
+
+                        train.addEventListener('dragstart', (e) => {
+                            e.dataTransfer.setData('text/plain', train.id);
+                            setTimeout(() => train.style.opacity = '0.5', 0); 
+                        });
+                        train.addEventListener('dragend', () => train.style.opacity = '1');
+
+                        zone.appendChild(train);
+                    });
+                }
+            });
+            updateTOL();
+        }
 
         function createTrain(headcode, direction, locationId) {
             const train = document.createElement('div');
@@ -523,6 +592,7 @@
             train.addEventListener('dragend', () => train.style.opacity = '1');
 
             document.getElementById(locationId).appendChild(train);
+            saveState();
         }
 
         document.querySelectorAll('.drop-zone').forEach(zone => {
@@ -552,6 +622,7 @@
                 if (zone.id === 'trash-zone') {
                     train.remove();
                     updateTOL();
+                    saveState();
                     return;
                 }
 
@@ -567,6 +638,7 @@
 
                 zone.appendChild(train);
                 updateTOL();
+                saveState();
             });
         });
 
@@ -579,6 +651,8 @@
                 }
             });
         }
+
+        window.onload = loadState;
     </script>
 </body>
 </html>
