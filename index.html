@@ -28,25 +28,27 @@
         }
         header {
             background: #000;
-            padding: 15px 30px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid var(--accent);
             flex-shrink: 0;
             z-index: 50;
+            height: 60px;
+            box-sizing: border-box;
         }
-        .header-controls { display: flex; gap: 15px; align-items: center; }
-        h1 { margin: 0; font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        h1 { margin: 0; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
         
         .help-btn {
             background: #2d3748;
             color: white;
             border: 2px solid #4a5568;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 1.2rem;
+            width: 32px;
+            height: 32px;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -54,19 +56,15 @@
             justify-content: center;
             transition: 0.2s;
         }
-        .help-btn:hover {
-            background: var(--accent);
-            color: black;
-            border-color: var(--accent);
-        }
+        .help-btn:hover { background: var(--accent); color: black; border-color: var(--accent); }
 
         .workstation-select {
             background: #2d3748;
             color: white;
             border: 2px solid var(--accent);
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
         }
@@ -74,7 +72,7 @@
             background: var(--accent);
             color: #000;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 15px;
             font-weight: 800;
             border-radius: 4px;
             cursor: pointer;
@@ -86,7 +84,7 @@
             background: #3a1111;
             color: #ff3333;
             border: 1px solid #ff3333;
-            padding: 10px 15px;
+            padding: 8px 15px;
             font-weight: 800;
             border-radius: 4px;
             cursor: pointer;
@@ -96,33 +94,40 @@
 
         .board {
             display: flex;
-            gap: 12px;
-            padding: 20px;
+            gap: 10px;
+            padding: 15px;
             overflow-x: auto;
             overflow-y: hidden;
-            align-items: stretch;
-            flex-grow: 1;
+            align-items: flex-start;
+            height: calc(100vh - 60px);
+            box-sizing: border-box;
         }
         .column {
             background: var(--panel);
-            min-width: 260px;
+            flex: 1 0 220px;
+            min-width: 220px;
+            max-width: 400px;
             border-radius: 8px;
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 12px;
-            flex-shrink: 0;
-            height: calc(100vh - 120px);
+            padding: 8px;
+            max-height: 100%;
             overflow-y: auto;
+            box-sizing: border-box;
         }
+        .column::-webkit-scrollbar { width: 6px; }
+        .column::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+        
         .column.hidden { display: none !important; }
         .column h3 {
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: #cbd5e0;
-            margin: 0 0 15px 0;
-            padding-bottom: 10px;
+            margin: 0 0 10px 0;
+            padding-bottom: 8px;
             border-bottom: 2px solid var(--border);
+            flex-shrink: 0;
             position: sticky;
             top: 0;
             background: var(--panel);
@@ -130,29 +135,30 @@
         }
         .drop-zone {
             background: #121419;
-            min-height: 70px;
-            margin-bottom: 10px;
+            min-height: 35px;
+            margin-bottom: 5px;
             border: 2px dashed #4a5568;
             border-radius: 6px;
-            padding: 18px 10px 10px 10px;
+            padding: 16px 6px 4px 6px;
             position: relative;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             transition: 0.2s;
+            flex-shrink: 0;
         }
         .drop-zone::before {
             content: attr(data-label);
             position: absolute;
-            top: 4px;
-            right: 8px;
-            font-size: 0.65rem;
+            top: 2px;
+            right: 6px;
+            font-size: 0.6rem;
             font-weight: bold;
             color: #718096;
             pointer-events: none;
             text-transform: uppercase;
         }
-        .block-section { background: #14171c; border-color: #4a5568; min-width: 220px; }
+        .block-section { background: #14171c; border-color: #4a5568; flex: 1 0 180px; min-width: 180px; }
         .single-line-zone { border: 2px solid var(--accent); }
         .up-line-zone { border-left: 4px solid var(--up-color); }
         .down-line-zone { border-left: 4px solid var(--down-color); }
@@ -160,31 +166,39 @@
         .drop-zone.occupied-tol {
             background: rgba(255, 51, 51, 0.15);
             border: 2px solid var(--tol-red);
-            box-shadow: inset 0 0 15px rgba(255, 51, 51, 0.2);
+            box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.2);
         }
         .train {
             background: #fff;
             color: #000;
-            padding: 10px;
+            padding: 6px;
             border-radius: 4px;
             font-weight: 900;
             cursor: grab;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border-left: 6px solid #e2e8f0;
-            font-family: 'Consolas', monospace;
-            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border-left: 5px solid #e2e8f0;
             z-index: 10;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .train-headcode { font-family: 'Consolas', monospace; font-size: 0.9rem; }
+        .train-timer {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            pointer-events: none;
         }
         .train.up-bound { border-left-color: var(--up-color); }
         .train.down-bound { border-left-color: var(--down-color); }
         .train:active { cursor: grabbing; opacity: 0.9; }
-        .trash-column {
-            background: #2a1111;
-            border-color: #ff3333;
-            min-width: 180px;
-        }
-        .trash-column h3 { background: transparent; color: #ff3333; border-color: #ff3333; }
+        .trash-column { background: #2a1111; border-color: #ff3333; flex: 0 0 160px; min-width: 160px; }
+        .trash-column h3 { color: #ff3333; border-color: #ff3333; }
         #trash-zone {
             border-color: #ff3333;
             color: #ff3333;
@@ -192,7 +206,7 @@
             justify-content: center;
             text-align: center;
             font-weight: bold;
-            min-height: 100px;
+            flex-grow: 1;
             background: rgba(255,0,0,0.1);
         }
         #trash-zone.drag-over { background: rgba(255,0,0,0.4); }
@@ -207,31 +221,28 @@
         }
         .modal-content {
             background: var(--panel);
-            padding: 30px;
+            padding: 25px;
             border-radius: 8px;
             border: 1px solid var(--border);
             text-align: center;
             width: 320px;
         }
-        .help-content {
-            width: 450px;
-            text-align: left;
-        }
+        .help-content { width: 450px; text-align: left; }
         .help-content h2 { text-align: center; margin-top: 0; color: var(--accent); }
         .help-content ul { padding-left: 20px; line-height: 1.6; }
         .help-content li { margin-bottom: 8px; }
         input, select {
-            padding: 10px;
+            padding: 8px;
             width: 100%;
             box-sizing: border-box;
             background: #0f1115;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 1rem;
-            margin-bottom: 15px;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
             border-radius: 4px;
         }
-        .modal-btns { display: flex; gap: 10px; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 5px; }
         .btn { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-primary { background: var(--accent); color: black; }
         .btn-secondary { background: #4a5568; color: white; }
@@ -241,7 +252,7 @@
 
     <header>
         <div>
-            <h1>Unofficial Dovedale Signal Ledger</h1>
+            <h1>Unofficial Dovedale Ledger</h1>
         </div>
         <div class="header-controls">
             <button id="help-btn" class="help-btn">?</button>
@@ -282,7 +293,7 @@
             <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-ms-gj-down"></div>
         </div>
 
-        <div class="column" data-views="ALL MS GJ CC" style="min-width: 220px;">
+        <div class="column" data-views="ALL MS GJ CC">
             <h3>GLASSBURY JN (GJ)</h3>
             <div class="drop-zone up-line-zone" data-label="UP LINE" id="gj-up"></div>
             <div class="drop-zone down-line-zone" data-label="DOWN LINE" id="gj-down"></div>
@@ -306,8 +317,8 @@
             <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-cc-mc-down"></div>
         </div>
 
-        <div class="column" data-views="ALL CC MC MW" style="min-width: 220px;">
-            <h3>MARIGOT CROSSING (MC)</h3>
+        <div class="column" data-views="ALL CC MC MW">
+            <h3>MARIGOT CROSS (MC)</h3>
             <div class="drop-zone up-line-zone" data-label="UP CROSSING" id="mc-up"></div>
             <div class="drop-zone down-line-zone" data-label="DOWN CROSSING" id="mc-down"></div>
         </div>
@@ -342,17 +353,18 @@
             <div class="drop-zone branch-line-zone" data-type="absolute" data-label="DOWN BRANCH" id="line-ge-dc-down"></div>
         </div>
 
-        <div class="column" data-views="ALL MW DC GE DE" style="min-width: 340px;">
+        <div class="column" data-views="ALL MW DC GE DE" style="flex-grow: 1.5;">
             <h3>DOVEDALE CENTRAL (DC)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1 (TERMINUS)" id="dc-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2 (TERMINUS)" id="dc-p2"></div>
-            <div class="drop-zone" data-label="PLATFORM 3 (TERMINUS)" id="dc-p3"></div>
-            <div class="drop-zone" data-label="PLATFORM 4 (TERMINUS)" id="dc-p4"></div>
-            <div class="drop-zone" data-label="PLATFORM 5 (THROUGH)" id="dc-p5"></div>
-            <div class="drop-zone" data-label="PLATFORM 6 (THROUGH)" id="dc-p6"></div>
-            <div class="drop-zone" data-label="PLATFORM 7 (THROUGH)" id="dc-p7"></div>
-            <div class="drop-zone" data-label="PLATFORM 8 (THROUGH)" id="dc-p8"></div>
-            <div class="drop-zone" data-label="DC SIDINGS / TMD" id="dc-sidings"></div>
+            <div class="drop-zone" data-label="PLATFORM 1" id="dc-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="dc-p2"></div>
+            <div class="drop-zone" data-label="PLATFORM 3" id="dc-p3"></div>
+            <div class="drop-zone" data-label="PLATFORM 4" id="dc-p4"></div>
+            <div class="drop-zone" data-label="PLATFORM 5" id="dc-p5"></div>
+            <div class="drop-zone" data-label="PLATFORM 6" id="dc-p6"></div>
+            <div class="drop-zone" data-label="PLATFORM 7" id="dc-p7"></div>
+            <div class="drop-zone" data-label="PLATFORM 8" id="dc-p8"></div>
+            <div class="drop-zone" data-label="DC SIDINGS" id="dc-sidings"></div>
+            <div class="drop-zone" data-label="DOVEDALE TMD" id="dc-tmd"></div>
         </div>
 
         <div class="column block-section" data-views="ALL DC DE">
@@ -372,14 +384,14 @@
             <div class="drop-zone branch-line-zone" data-type="single" data-label="SINGLE BRANCH" id="line-ch-de"></div>
         </div>
 
-        <div class="column" data-views="ALL DC DE CH SAT" style="min-width: 320px;">
+        <div class="column" data-views="ALL DC DE CH SAT">
             <h3>DOVEDALE EAST (DE)</h3>
-            <div class="drop-zone" data-label="PLATFORM 6 (TERMINATES FROM DC)" id="de-p6"></div>
-            <div class="drop-zone" data-label="PLATFORM 5 (UP LOOP)" id="de-p5"></div>
-            <div class="drop-zone" data-label="PLATFORM 4 (UP MAIN)" id="de-p4"></div>
-            <div class="drop-zone" data-label="PLATFORM 3 (DOWN MAIN)" id="de-p3"></div>
-            <div class="drop-zone" data-label="PLATFORM 2 (DOWN LOOP)" id="de-p2"></div>
-            <div class="drop-zone" data-label="PLATFORM 1 (TERMINATES FROM SAT)" id="de-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 1" id="de-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="de-p2"></div>
+            <div class="drop-zone" data-label="PLATFORM 3" id="de-p3"></div>
+            <div class="drop-zone" data-label="PLATFORM 4" id="de-p4"></div>
+            <div class="drop-zone" data-label="PLATFORM 5" id="de-p5"></div>
+            <div class="drop-zone" data-label="PLATFORM 6" id="de-p6"></div>
             <div class="drop-zone" data-label="DE SIDINGS" id="de-sidings"></div>
         </div>
 
@@ -390,8 +402,8 @@
 
         <div class="column" data-views="ALL DE SAT FM">
             <h3>SATUS SERVICES (SAT)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1 (UP)" id="sat-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2 (DOWN)" id="sat-p2"></div>
+            <div class="drop-zone" data-label="PLATFORM 1" id="sat-p1"></div>
+            <div class="drop-zone" data-label="PLATFORM 2" id="sat-p2"></div>
         </div>
 
         <div class="column block-section" data-views="ALL SAT FM">
@@ -411,7 +423,7 @@
             <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-fm-bl"></div>
         </div>
 
-        <div class="column" data-views="ALL FM BL AB" style="min-width: 220px;">
+        <div class="column" data-views="ALL FM BL AB">
             <h3>BENYHONE LOOP (BL)</h3>
             <div class="drop-zone up-line-zone" data-label="UP LOOP" id="bl-up"></div>
             <div class="drop-zone down-line-zone" data-label="DOWN LOOP" id="bl-down"></div>
@@ -431,7 +443,7 @@
         <div class="column trash-column" data-views="ALL MS GJ CC MC MW GE DC CH DE SAT FM BL AB">
             <h3>END OF LINE</h3>
             <div class="drop-zone" id="trash-zone" data-type="trash">
-                <br>DROP TRAIN HERE<br>TO DESPAWN
+                <br>DROP TRAIN HERE
             </div>
         </div>
 
@@ -441,6 +453,16 @@
         <div class="modal-content">
             <h2 style="margin-top:0;">Identify Train</h2>
             <input type="text" id="headcode-input" placeholder="Headcode (e.g. 1A02)" maxlength="4">
+            <input type="text" id="class-input" placeholder="Class (e.g. 465)" maxlength="8">
+            <select id="cars-input">
+                <option value="2C">2 Cars</option>
+                <option value="3C">3 Cars</option>
+                <option value="4C">4 Cars</option>
+                <option value="5C">5 Cars</option>
+                <option value="8C">8 Cars</option>
+                <option value="FRT">Freight</option>
+                <option value="LE">Light Loco</option>
+            </select>
             <select id="direction-input">
                 <option value="up">Up Train (Towards MS)</option>
                 <option value="down">Down Train (Towards AB)</option>
@@ -462,22 +484,48 @@
         </div>
     </div>
 
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin-top:0;">Edit Train</h2>
+            <input type="text" id="edit-headcode-input" placeholder="Headcode" maxlength="4">
+            <input type="text" id="edit-class-input" placeholder="Class" maxlength="8">
+            <select id="edit-cars-input">
+                <option value="2C">2 Cars</option>
+                <option value="3C">3 Cars</option>
+                <option value="4C">4 Cars</option>
+                <option value="5C">5 Cars</option>
+                <option value="8C">8 Cars</option>
+                <option value="FRT">Freight</option>
+                <option value="LE">Light Loco</option>
+            </select>
+            <select id="edit-direction-input">
+                <option value="up">Up Train (Towards MS)</option>
+                <option value="down">Down Train (Towards AB)</option>
+            </select>
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="document.getElementById('edit-modal').style.display='none'">Cancel</button>
+                <button class="btn btn-primary" id="confirm-edit">SAVE</button>
+            </div>
+        </div>
+    </div>
+
     <div id="help-modal" class="modal-overlay">
         <div class="modal-content help-content">
             <h2>How to Use the Ledger</h2>
             <p><strong>Colors & Lines:</strong></p>
             <ul>
-                <li><span style="color:var(--up-color);font-weight:bold;">Blue:</span> UP Trains / UP Lines (Travelling Left towards Masonfield)</li>
-                <li><span style="color:var(--down-color);font-weight:bold;">Green:</span> DOWN Trains / DOWN Lines (Travelling Right towards Ashburn)</li>
-                <li><span style="color:var(--branch-color);font-weight:bold;">Purple:</span> Branch Lines (Gleethrop End & Cosdale Harbour)</li>
-                <li><span style="color:var(--tol-red);font-weight:bold;">Red Pulse:</span> Train On Line (Occupied Track Section)</li>
+                <li><span style="color:var(--up-color);font-weight:bold;">Blue:</span> UP Trains / UP Lines (Towards Masonfield)</li>
+                <li><span style="color:var(--down-color);font-weight:bold;">Green:</span> DOWN Trains / DOWN Lines (Towards Ashburn)</li>
+                <li><span style="color:var(--branch-color);font-weight:bold;">Purple:</span> Branch Lines (Gleethrop & Cosdale)</li>
+                <li><span style="color:var(--tol-red);font-weight:bold;">Red Pulse:</span> Train On Line (Occupied Track)</li>
             </ul>
             <p><strong>Mechanics:</strong></p>
             <ul>
-                <li><strong>Moving:</strong> Click and drag the train card to any platform or block line drop zone.</li>
-                <li><strong>Interlocks:</strong> The system enforces Absolute and Tokenless Block rules. It will block you from dragging a train into a track section that is already occupied.</li>
+                <li><strong>Timers:</strong> Each train has a stopwatch. Moving a train to a new block or platform resets its timer.</li>
+                <li><strong>Editing:</strong> <strong>Click and Hold</strong> any train card for 2 seconds to edit its headcode, class, cars, and direction.</li>
+                <li><strong>Interlocks:</strong> The system enforces Absolute and Tokenless Block rules.</li>
                 <li><strong>Removing:</strong> Drag a train to the "END OF LINE" column to permanently despawn it.</li>
-                <li><strong>Saving:</strong> The board automatically saves your trains to your browser. You can safely refresh the page without losing track of your trains.</li>
+                <li><strong>Saving:</strong> The board automatically saves your trains to your browser.</li>
             </ul>
             <button class="btn btn-primary" id="close-help-btn" style="width:100%; margin-top:10px;">Got it!</button>
         </div>
@@ -500,13 +548,18 @@
         });
 
         const spawnModal = document.getElementById('spawn-modal');
+        const editModal = document.getElementById('edit-modal');
         const addBtn = document.getElementById('add-train-btn');
         const confirmBtn = document.getElementById('confirm-spawn');
+        const confirmEditBtn = document.getElementById('confirm-edit');
         const clearAllBtn = document.getElementById('clear-all-btn');
         
         const helpModal = document.getElementById('help-modal');
         const helpBtn = document.getElementById('help-btn');
         const closeHelpBtn = document.getElementById('close-help-btn');
+
+        let editingTrainId = null;
+        let holdTimer = null;
 
         helpBtn.onclick = () => { helpModal.style.display = 'flex'; };
         closeHelpBtn.onclick = () => { helpModal.style.display = 'none'; };
@@ -523,12 +576,38 @@
 
         confirmBtn.onclick = () => {
             const headcode = document.getElementById('headcode-input').value.toUpperCase() || "UNKN";
+            const tClass = document.getElementById('class-input').value.toUpperCase() || "---";
+            const tCars = document.getElementById('cars-input').value;
             const dir = document.getElementById('direction-input').value;
             const loc = document.getElementById('spawn-loc-input').value;
             
-            createTrain(headcode, dir, loc);
+            createTrain(headcode, tClass, tCars, dir, loc);
             spawnModal.style.display = 'none';
             document.getElementById('headcode-input').value = "";
+            document.getElementById('class-input').value = "";
+        };
+
+        confirmEditBtn.onclick = () => {
+            if(!editingTrainId) return;
+            const train = document.getElementById(editingTrainId);
+            if(train) {
+                const newHeadcode = document.getElementById('edit-headcode-input').value.toUpperCase();
+                const newClass = document.getElementById('edit-class-input').value.toUpperCase();
+                const newCars = document.getElementById('edit-cars-input').value;
+                const newDir = document.getElementById('edit-direction-input').value;
+                
+                train.setAttribute('data-headcode', newHeadcode);
+                train.setAttribute('data-class', newClass);
+                train.setAttribute('data-cars', newCars);
+                train.setAttribute('data-direction', newDir);
+                
+                train.className = `train ${newDir === 'up' ? 'up-bound' : 'down-bound'}`;
+                const arrow = newDir === 'up' ? '⬅' : '➔';
+                train.querySelector('.train-headcode').innerText = `${arrow} ${newHeadcode} | ${newClass} | ${newCars}`;
+                
+                saveState();
+            }
+            editModal.style.display = 'none';
         };
 
         function saveState() {
@@ -538,8 +617,11 @@
                 zone.querySelectorAll('.train').forEach(t => {
                     trains.push({
                         id: t.id,
-                        text: t.innerText,
-                        direction: t.classList.contains('up-bound') ? 'up' : 'down'
+                        headcode: t.getAttribute('data-headcode'),
+                        tClass: t.getAttribute('data-class'),
+                        tCars: t.getAttribute('data-cars'),
+                        direction: t.getAttribute('data-direction'),
+                        timestamp: t.getAttribute('data-timestamp')
                     });
                 });
                 if(trains.length > 0) {
@@ -557,42 +639,68 @@
                 const zone = document.getElementById(zoneData.zoneId);
                 if(zone && zoneData.zoneId !== 'trash-zone') {
                     zoneData.trains.forEach(tData => {
-                        const train = document.createElement('div');
-                        train.className = `train ${tData.direction === 'up' ? 'up-bound' : 'down-bound'}`;
-                        train.id = tData.id;
-                        train.draggable = true;
-                        train.innerText = tData.text;
-
-                        train.addEventListener('dragstart', (e) => {
-                            e.dataTransfer.setData('text/plain', train.id);
-                            setTimeout(() => train.style.opacity = '0.5', 0); 
-                        });
-                        train.addEventListener('dragend', () => train.style.opacity = '1');
-
-                        zone.appendChild(train);
+                        createTrain(tData.headcode, tData.tClass, tData.tCars, tData.direction, zone.id, tData.id, tData.timestamp);
                     });
                 }
             });
             updateTOL();
         }
 
-        function createTrain(headcode, direction, locationId) {
+        function createTrain(headcode, tClass, tCars, direction, locationId, existingId = null, existingTs = null) {
             const train = document.createElement('div');
             train.className = `train ${direction === 'up' ? 'up-bound' : 'down-bound'}`;
-            train.id = 'train-' + Math.random().toString(36).substr(2, 9);
+            train.id = existingId || ('train-' + Math.random().toString(36).substr(2, 9));
             train.draggable = true;
             
+            train.setAttribute('data-headcode', headcode);
+            train.setAttribute('data-class', tClass || "---");
+            train.setAttribute('data-cars', tCars || "2C");
+            train.setAttribute('data-direction', direction);
+            train.setAttribute('data-timestamp', existingTs || Date.now());
+
             const arrow = direction === 'up' ? '⬅' : '➔';
-            train.innerText = `${arrow} ${headcode}`;
+            
+            const headcodeSpan = document.createElement('span');
+            headcodeSpan.className = 'train-headcode';
+            headcodeSpan.innerText = `${arrow} ${headcode} | ${tClass} | ${tCars}`;
+            
+            const timerSpan = document.createElement('span');
+            timerSpan.className = 'train-timer';
+            timerSpan.innerText = '00:00';
+
+            train.appendChild(headcodeSpan);
+            train.appendChild(timerSpan);
 
             train.addEventListener('dragstart', (e) => {
+                clearTimeout(holdTimer);
                 e.dataTransfer.setData('text/plain', train.id);
                 setTimeout(() => train.style.opacity = '0.5', 0); 
             });
             train.addEventListener('dragend', () => train.style.opacity = '1');
+            
+            train.addEventListener('mousedown', () => {
+                holdTimer = setTimeout(() => openEditModal(train), 2000);
+            });
+            train.addEventListener('mouseup', () => clearTimeout(holdTimer));
+            train.addEventListener('mouseleave', () => clearTimeout(holdTimer));
+            
+            train.addEventListener('touchstart', () => {
+                holdTimer = setTimeout(() => openEditModal(train), 2000);
+            });
+            train.addEventListener('touchend', () => clearTimeout(holdTimer));
+            train.addEventListener('touchmove', () => clearTimeout(holdTimer));
 
             document.getElementById(locationId).appendChild(train);
-            saveState();
+            if(!existingId) saveState();
+        }
+
+        function openEditModal(train) {
+            editingTrainId = train.id;
+            document.getElementById('edit-headcode-input').value = train.getAttribute('data-headcode');
+            document.getElementById('edit-class-input').value = train.getAttribute('data-class');
+            document.getElementById('edit-cars-input').value = train.getAttribute('data-cars');
+            document.getElementById('edit-direction-input').value = train.getAttribute('data-direction');
+            editModal.style.display = 'flex';
         }
 
         document.querySelectorAll('.drop-zone').forEach(zone => {
@@ -636,6 +744,8 @@
                     return; 
                 }
 
+                train.setAttribute('data-timestamp', Date.now());
+                
                 zone.appendChild(train);
                 updateTOL();
                 saveState();
@@ -651,6 +761,18 @@
                 }
             });
         }
+
+        setInterval(() => {
+            const now = Date.now();
+            document.querySelectorAll('.train').forEach(train => {
+                const ts = parseInt(train.getAttribute('data-timestamp')) || now;
+                const diff = Math.floor((now - ts) / 1000);
+                const m = String(Math.floor(diff / 60)).padStart(2, '0');
+                const s = String(diff % 60).padStart(2, '0');
+                const timerEl = train.querySelector('.train-timer');
+                if (timerEl) timerEl.innerText = `${m}:${s}`;
+            });
+        }, 1000);
 
         window.onload = loadState;
     </script>
