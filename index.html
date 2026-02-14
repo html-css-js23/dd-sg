@@ -68,7 +68,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        #add-train-btn {
+        #add-train-btn, #clear-all-btn {
             background: var(--accent);
             color: #000;
             border: none;
@@ -79,17 +79,7 @@
             transition: 0.2s;
         }
         #add-train-btn:hover { transform: scale(1.05); }
-
-        #clear-all-btn {
-            background: #3a1111;
-            color: #ff3333;
-            border: 1px solid #ff3333;
-            padding: 8px 15px;
-            font-weight: 800;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        #clear-all-btn { background: #3a1111; color: #ff3333; border: 1px solid #ff3333; }
         #clear-all-btn:hover { background: #ff3333; color: white; }
 
         .board {
@@ -118,7 +108,6 @@
         }
         .column::-webkit-scrollbar { width: 6px; }
         .column::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
-        
         .column.hidden { display: none !important; }
         .column h3 {
             text-align: center;
@@ -133,6 +122,7 @@
             background: var(--panel);
             z-index: 5;
         }
+        
         .drop-zone {
             background: #121419;
             min-height: 35px;
@@ -278,176 +268,7 @@
     </header>
 
     <div class="board" id="board">
-        
-        <div class="column" data-views="ALL MS GJ">
-            <h3>MASONFIELD (MS)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="ms-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="ms-p2"></div>
-            <div class="drop-zone" data-label="PLATFORM 3" id="ms-p3"></div>
-            <div class="drop-zone" data-label="MS SIDINGS" id="ms-sidings"></div>
         </div>
-
-        <div class="column block-section" data-views="ALL MS GJ">
-            <h3>LINE: MS ↔ GJ</h3>
-            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-ms-gj-up"></div>
-            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-ms-gj-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL MS GJ CC">
-            <h3>GLASSBURY JN (GJ)</h3>
-            <div class="drop-zone up-line-zone" data-label="UP LINE" id="gj-up"></div>
-            <div class="drop-zone down-line-zone" data-label="DOWN LINE" id="gj-down"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL GJ CC">
-            <h3>LINE: GJ ↔ CC</h3>
-            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-gj-cc-up"></div>
-            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-gj-cc-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL GJ CC MC">
-            <h3>CODSALL CASTLE (CC)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="cc-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="cc-p2"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL CC MC">
-            <h3>LINE: CC ↔ MC</h3>
-            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-cc-mc-up"></div>
-            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-cc-mc-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL CC MC MW">
-            <h3>MARIGOT CROSS (MC)</h3>
-            <div class="drop-zone up-line-zone" data-label="UP CROSSING" id="mc-up"></div>
-            <div class="drop-zone down-line-zone" data-label="DOWN CROSSING" id="mc-down"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL MC MW">
-            <h3>LINE: MC ↔ MW</h3>
-            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-mc-mw-up"></div>
-            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-mc-mw-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL MC MW DC">
-            <h3>MAZEWOOD (MW)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="mw-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="mw-p2"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL MW DC">
-            <h3>LINE: MW ↔ DC</h3>
-            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-mw-dc-up"></div>
-            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-mw-dc-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL GE DC">
-            <h3>GLEETHROP END (GE)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="ge-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="ge-p2"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL GE DC">
-            <h3>LINE: GE ↔ DC</h3>
-            <div class="drop-zone branch-line-zone" data-type="absolute" data-label="UP BRANCH" id="line-ge-dc-up"></div>
-            <div class="drop-zone branch-line-zone" data-type="absolute" data-label="DOWN BRANCH" id="line-ge-dc-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL MW DC GE DE" style="flex-grow: 1.5;">
-            <h3>DOVEDALE CENTRAL (DC)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="dc-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="dc-p2"></div>
-            <div class="drop-zone" data-label="PLATFORM 3" id="dc-p3"></div>
-            <div class="drop-zone" data-label="PLATFORM 4" id="dc-p4"></div>
-            <div class="drop-zone" data-label="PLATFORM 5" id="dc-p5"></div>
-            <div class="drop-zone" data-label="PLATFORM 6" id="dc-p6"></div>
-            <div class="drop-zone" data-label="PLATFORM 7" id="dc-p7"></div>
-            <div class="drop-zone" data-label="PLATFORM 8" id="dc-p8"></div>
-            <div class="drop-zone" data-label="DC SIDINGS" id="dc-sidings"></div>
-            <div class="drop-zone" data-label="DOVEDALE TMD" id="dc-tmd"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL DC DE">
-            <h3>LINE: DC ↔ DE</h3>
-            <div class="drop-zone up-line-zone" data-type="absolute" data-label="UP MAIN" id="line-dc-de-up"></div>
-            <div class="drop-zone down-line-zone" data-type="absolute" data-label="DOWN MAIN" id="line-dc-de-down"></div>
-        </div>
-
-        <div class="column" data-views="ALL CH DE">
-            <h3>COSDALE HARBOUR (CH)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="ch-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="ch-p2"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL CH DE">
-            <h3>LINE: CH ↔ DE</h3>
-            <div class="drop-zone branch-line-zone" data-type="single" data-label="SINGLE BRANCH" id="line-ch-de"></div>
-        </div>
-
-        <div class="column" data-views="ALL DC DE CH SAT">
-            <h3>DOVEDALE EAST (DE)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="de-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="de-p2"></div>
-            <div class="drop-zone" data-label="PLATFORM 3" id="de-p3"></div>
-            <div class="drop-zone" data-label="PLATFORM 4" id="de-p4"></div>
-            <div class="drop-zone" data-label="PLATFORM 5" id="de-p5"></div>
-            <div class="drop-zone" data-label="PLATFORM 6" id="de-p6"></div>
-            <div class="drop-zone" data-label="DE SIDINGS" id="de-sidings"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL DE SAT">
-            <h3>⚠️ LINE: DE ↔ SAT</h3>
-            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-de-sat"></div>
-        </div>
-
-        <div class="column" data-views="ALL DE SAT FM">
-            <h3>SATUS SERVICES (SAT)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="sat-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="sat-p2"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL SAT FM">
-            <h3>⚠️ LINE: SAT ↔ FM</h3>
-            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-sat-fm"></div>
-        </div>
-
-        <div class="column" data-views="ALL SAT FM BL">
-            <h3>FANORY MILL (FM)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="fm-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="fm-p2"></div>
-            <div class="drop-zone" data-label="SIDINGS" id="fm-sidings"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL FM BL">
-            <h3>⚠️ LINE: FM ↔ BL</h3>
-            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-fm-bl"></div>
-        </div>
-
-        <div class="column" data-views="ALL FM BL AB">
-            <h3>BENYHONE LOOP (BL)</h3>
-            <div class="drop-zone up-line-zone" data-label="UP LOOP" id="bl-up"></div>
-            <div class="drop-zone down-line-zone" data-label="DOWN LOOP" id="bl-down"></div>
-        </div>
-
-        <div class="column block-section" data-views="ALL BL AB">
-            <h3>⚠️ LINE: BL ↔ AB</h3>
-            <div class="drop-zone single-line-zone" data-type="single" data-label="SINGLE LINE" id="line-bl-ab"></div>
-        </div>
-
-        <div class="column" data-views="ALL BL AB">
-            <h3>ASHBURN (AB)</h3>
-            <div class="drop-zone" data-label="PLATFORM 1" id="ab-p1"></div>
-            <div class="drop-zone" data-label="PLATFORM 2" id="ab-p2"></div>
-        </div>
-
-        <div class="column trash-column" data-views="ALL MS GJ CC MC MW GE DC CH DE SAT FM BL AB">
-            <h3>END OF LINE</h3>
-            <div class="drop-zone" id="trash-zone" data-type="trash">
-                <br>DROP TRAIN HERE
-            </div>
-        </div>
-
-    </div>
 
     <div id="spawn-modal" class="modal-overlay">
         <div class="modal-content">
@@ -468,15 +289,7 @@
                 <option value="down">Down Train (Towards AB)</option>
             </select>
             <select id="spawn-loc-input">
-                <option value="ms-sidings">Masonfield (Sidings)</option>
-                <option value="dc-sidings" selected>Dovedale Central (TMD/Sidings)</option>
-                <option value="ge-p1">Gleethrop End (Platform 1)</option>
-                <option value="ch-p1">Cosdale Harbour (Platform 1)</option>
-                <option value="de-sidings">Dovedale East (Sidings)</option>
-                <option value="sat-p1">Satus Services (Platform 1)</option>
-                <option value="fm-sidings">Fanory Mill (Sidings)</option>
-                <option value="ab-p1">Ashburn (Platform 1)</option>
-            </select>
+                </select>
             <div class="modal-btns">
                 <button class="btn btn-secondary" onclick="document.getElementById('spawn-modal').style.display='none'">Cancel</button>
                 <button class="btn btn-primary" id="confirm-spawn">SPAWN</button>
@@ -532,41 +345,131 @@
     </div>
 
     <script>
-        const workstationSelect = document.getElementById('workstation-selector');
-        const columns = document.querySelectorAll('.column');
+        let editingTrainId = null;
+        let holdTimer = null;
 
+        // --- LAYOUT PARSER ---
+        async function loadLayout() {
+            try {
+                const response = await fetch('layout.txt');
+                if (!response.ok) throw new Error("File not found");
+                const text = await response.text();
+                parseLayoutText(text);
+            } catch (err) {
+                document.getElementById('board').innerHTML = `<h3 style='color:red; padding: 20px;'>Error loading layout.txt. If you are opening this locally (file://), you must use a local web server (like VS Code Live Server) due to browser security rules.</h3>`;
+            }
+        }
+
+        function parseLayoutText(text) {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            const lines = text.split('\n');
+            let currentCol = null;
+
+            lines.forEach(line => {
+                line = line.trim();
+                if(!line) return;
+
+                let views = "ALL";
+                let content = line;
+                const viewMatch = line.match(/\[(.*?)\]/);
+                if(viewMatch) {
+                    views = viewMatch[1];
+                    content = line.replace(/\[.*?\]/, '').trim();
+                }
+
+                const prefix = content.charAt(0);
+                const textContent = content.substring(1).trim();
+
+                if (prefix === '#' || prefix === '>' || prefix === '!') {
+                    currentCol = document.createElement('div');
+                    currentCol.className = 'column';
+                    if(prefix === '>') currentCol.classList.add('block-section');
+                    if(prefix === '!') currentCol.classList.add('trash-column');
+                    currentCol.setAttribute('data-views', views);
+
+                    const h3 = document.createElement('h3');
+                    h3.innerText = textContent;
+                    currentCol.appendChild(h3);
+
+                    if(prefix === '!') {
+                        const dz = document.createElement('div');
+                        dz.className = 'drop-zone';
+                        dz.id = 'trash-zone';
+                        dz.setAttribute('data-type', 'trash');
+                        dz.innerHTML = '<br>DROP TRAIN HERE';
+                        attachDropListeners(dz);
+                        currentCol.appendChild(dz);
+                    }
+                    board.appendChild(currentCol);
+                } else if (currentCol && prefix !== '!') {
+                    const parts = textContent.split('|').map(s => s.trim());
+                    const label = parts[0];
+                    const typeInfo = parts[1] || '';
+
+                    const dz = document.createElement('div');
+                    dz.className = 'drop-zone';
+                    
+                    const colName = currentCol.querySelector('h3').innerText;
+                    dz.id = (colName + '-' + label).replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                    dz.setAttribute('data-label', label);
+
+                    if (prefix === '=') {
+                        dz.setAttribute('data-type', 'absolute');
+                        if(typeInfo === 'up') dz.classList.add('up-line-zone');
+                        if(typeInfo === 'down') dz.classList.add('down-line-zone');
+                        if(typeInfo === 'branch') dz.classList.add('branch-line-zone');
+                    } else if (prefix === '*') {
+                        dz.setAttribute('data-type', 'single');
+                        dz.classList.add('single-line-zone');
+                        if(typeInfo === 'branch') dz.classList.add('branch-line-zone');
+                    } else if (prefix === '^') {
+                        dz.classList.add('up-line-zone');
+                    } else if (prefix === 'v') {
+                        dz.classList.add('down-line-zone');
+                    }
+
+                    attachDropListeners(dz);
+                    currentCol.appendChild(dz);
+                }
+            });
+
+            populateSpawnDropdown();
+            loadState();
+        }
+
+        function populateSpawnDropdown() {
+            const select = document.getElementById('spawn-loc-input');
+            select.innerHTML = '';
+            document.querySelectorAll('.column:not(.block-section):not(.trash-column) .drop-zone').forEach(dz => {
+                const opt = document.createElement('option');
+                opt.value = dz.id;
+                const stationName = dz.closest('.column').querySelector('h3').innerText;
+                opt.innerText = `${stationName} - ${dz.getAttribute('data-label')}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // --- UI & LOGIC ---
+        const workstationSelect = document.getElementById('workstation-selector');
         workstationSelect.addEventListener('change', (e) => {
             const selectedView = e.target.value;
-            columns.forEach(col => {
+            document.querySelectorAll('.column').forEach(col => {
                 const views = col.getAttribute('data-views').split(' ');
-                if (views.includes(selectedView)) {
-                    col.classList.remove('hidden');
-                } else {
-                    col.classList.add('hidden');
-                }
+                if (views.includes(selectedView)) col.classList.remove('hidden');
+                else col.classList.add('hidden');
             });
         });
 
         const spawnModal = document.getElementById('spawn-modal');
         const editModal = document.getElementById('edit-modal');
-        const addBtn = document.getElementById('add-train-btn');
-        const confirmBtn = document.getElementById('confirm-spawn');
-        const confirmEditBtn = document.getElementById('confirm-edit');
-        const clearAllBtn = document.getElementById('clear-all-btn');
-        
         const helpModal = document.getElementById('help-modal');
-        const helpBtn = document.getElementById('help-btn');
-        const closeHelpBtn = document.getElementById('close-help-btn');
 
-        let editingTrainId = null;
-        let holdTimer = null;
+        document.getElementById('help-btn').onclick = () => helpModal.style.display = 'flex';
+        document.getElementById('close-help-btn').onclick = () => helpModal.style.display = 'none';
+        document.getElementById('add-train-btn').onclick = () => { spawnModal.style.display = 'flex'; document.getElementById('headcode-input').focus(); };
 
-        helpBtn.onclick = () => { helpModal.style.display = 'flex'; };
-        closeHelpBtn.onclick = () => { helpModal.style.display = 'none'; };
-
-        addBtn.onclick = () => { spawnModal.style.display = 'flex'; document.getElementById('headcode-input').focus(); };
-
-        clearAllBtn.onclick = () => {
+        document.getElementById('clear-all-btn').onclick = () => {
             if(confirm("Are you sure you want to delete ALL trains from the ledger?")) {
                 document.querySelectorAll('.train').forEach(t => t.remove());
                 updateTOL();
@@ -574,7 +477,7 @@
             }
         };
 
-        confirmBtn.onclick = () => {
+        document.getElementById('confirm-spawn').onclick = () => {
             const headcode = document.getElementById('headcode-input').value.toUpperCase() || "UNKN";
             const tClass = document.getElementById('class-input').value.toUpperCase() || "---";
             const tCars = document.getElementById('cars-input').value;
@@ -587,7 +490,7 @@
             document.getElementById('class-input').value = "";
         };
 
-        confirmEditBtn.onclick = () => {
+        document.getElementById('confirm-edit').onclick = () => {
             if(!editingTrainId) return;
             const train = document.getElementById(editingTrainId);
             if(train) {
@@ -604,7 +507,6 @@
                 train.className = `train ${newDir === 'up' ? 'up-bound' : 'down-bound'}`;
                 const arrow = newDir === 'up' ? '⬅' : '➔';
                 train.querySelector('.train-headcode').innerText = `${arrow} ${newHeadcode} | ${newClass} | ${newCars}`;
-                
                 saveState();
             }
             editModal.style.display = 'none';
@@ -624,9 +526,7 @@
                         timestamp: t.getAttribute('data-timestamp')
                     });
                 });
-                if(trains.length > 0) {
-                    state.push({ zoneId: zone.id, trains: trains });
-                }
+                if(trains.length > 0) state.push({ zoneId: zone.id, trains: trains });
             });
             localStorage.setItem('dovedaleState', JSON.stringify(state));
         }
@@ -659,7 +559,6 @@
             train.setAttribute('data-timestamp', existingTs || Date.now());
 
             const arrow = direction === 'up' ? '⬅' : '➔';
-            
             const headcodeSpan = document.createElement('span');
             headcodeSpan.className = 'train-headcode';
             headcodeSpan.innerText = `${arrow} ${headcode} | ${tClass} | ${tCars}`;
@@ -678,19 +577,19 @@
             });
             train.addEventListener('dragend', () => train.style.opacity = '1');
             
-            train.addEventListener('mousedown', () => {
-                holdTimer = setTimeout(() => openEditModal(train), 2000);
-            });
-            train.addEventListener('mouseup', () => clearTimeout(holdTimer));
-            train.addEventListener('mouseleave', () => clearTimeout(holdTimer));
-            
-            train.addEventListener('touchstart', () => {
-                holdTimer = setTimeout(() => openEditModal(train), 2000);
-            });
-            train.addEventListener('touchend', () => clearTimeout(holdTimer));
-            train.addEventListener('touchmove', () => clearTimeout(holdTimer));
+            const startHold = () => { holdTimer = setTimeout(() => openEditModal(train), 1500); };
+            const clearHold = () => { clearTimeout(holdTimer); };
 
-            document.getElementById(locationId).appendChild(train);
+            train.addEventListener('mousedown', startHold);
+            train.addEventListener('mouseup', clearHold);
+            train.addEventListener('mouseleave', clearHold);
+            train.addEventListener('touchstart', startHold);
+            train.addEventListener('touchend', clearHold);
+            train.addEventListener('touchmove', clearHold);
+
+            const targetZone = document.getElementById(locationId);
+            if(targetZone) targetZone.appendChild(train);
+            
             if(!existingId) saveState();
         }
 
@@ -703,14 +602,11 @@
             editModal.style.display = 'flex';
         }
 
-        document.querySelectorAll('.drop-zone').forEach(zone => {
+        function attachDropListeners(zone) {
             zone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                if(zone.id === 'trash-zone') {
-                    zone.classList.add('drag-over');
-                } else {
-                    zone.style.background = '#2d3748'; 
-                }
+                if(zone.id === 'trash-zone') zone.classList.add('drag-over');
+                else zone.style.background = '#2d3748'; 
             });
 
             zone.addEventListener('dragleave', () => {
@@ -745,20 +641,16 @@
                 }
 
                 train.setAttribute('data-timestamp', Date.now());
-                
                 zone.appendChild(train);
                 updateTOL();
                 saveState();
             });
-        });
+        }
 
         function updateTOL() {
             document.querySelectorAll('.drop-zone[data-type="absolute"], .drop-zone[data-type="single"]').forEach(zone => {
-                if (zone.children.length > 0) {
-                    zone.classList.add('occupied-tol');
-                } else {
-                    zone.classList.remove('occupied-tol');
-                }
+                if (zone.children.length > 0) zone.classList.add('occupied-tol');
+                else zone.classList.remove('occupied-tol');
             });
         }
 
@@ -774,7 +666,7 @@
             });
         }, 1000);
 
-        window.onload = loadState;
+        window.onload = loadLayout;
     </script>
 </body>
 </html>
