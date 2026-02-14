@@ -236,6 +236,22 @@
         .btn { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-primary { background: var(--accent); color: black; }
         .btn-secondary { background: #4a5568; color: white; }
+
+        /* Horizontal Scrollbar for the Board */
+        .board::-webkit-scrollbar { 
+            height: 14px; 
+        }
+        .board::-webkit-scrollbar-track { 
+            background: var(--bg); 
+        }
+        .board::-webkit-scrollbar-thumb { 
+            background: #4a5568; 
+            border-radius: 8px; 
+            border: 4px solid var(--bg); 
+        }
+        .board::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
     </style>
 </head>
 <body>
@@ -266,6 +282,13 @@
             <button id="add-train-btn">+ SPAWN TRAIN</button>
         </div>
     </header>
+
+    <div>
+        <h1>Dovedale Signaler Card System</h1>
+        <div style="font-size: 0.8rem; color: #718096; margin-top: 4px; letter-spacing: 0.5px;">
+            Made by Alex (Discord: alex.v_dev)
+        </div>
+    </div>
 
     <div class="board" id="board">
         </div>
